@@ -25,7 +25,8 @@ def get_headers(access_token=None):
         "sec-fetch-mode": "cors",
         "sec-fetch-site": "cross-site",
         "user-agent": ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-                       "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36")
+                       "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36"),
+        "x-flipinator-tools": "q9ug98ewug98e"
     }
     
     if access_token:
