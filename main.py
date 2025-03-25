@@ -65,7 +65,7 @@ def extract_eligible_variants(brand_id):
             
             # Check if this variant meets ALL criteria
             if (item_mapping.get("allInformationForImportProvided") is True and
-                item_mapping.get("prefilledValuesVerified") is True and
+                # item_mapping.get("prefilledValuesVerified") is True and
                 item_mapping.get("dataPrefillingFinished") is True and
                 item_mapping.get("allMandatoryAttributesConfigured") is True):
                 
@@ -81,8 +81,8 @@ def extract_eligible_variants(brand_id):
                 failing_flags = []
                 if item_mapping.get("allInformationForImportProvided") is not True:
                     failing_flags.append("allInformationForImportProvided")
-                if item_mapping.get("prefilledValuesVerified") is not True:
-                    failing_flags.append("prefilledValuesVerified")
+                # if item_mapping.get("prefilledValuesVerified") is not True:
+                #     failing_flags.append("prefilledValuesVerified")
                 if item_mapping.get("dataPrefillingFinished") is not True:
                     failing_flags.append("dataPrefillingFinished")
                 if item_mapping.get("allMandatoryAttributesConfigured") is not True:
