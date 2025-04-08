@@ -6,7 +6,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Logging setup
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -47,7 +46,7 @@ def get_brands_list():
     headers = get_headers(access_token)
     payload = {
         "page": 1,
-        "limit": 50,  # Increased from 10 to 50 to fetch more brands at once
+        "limit": 50,
         "displayStatus": "live",
         "sort": "createdAt",
         "order": "desc",
@@ -64,6 +63,38 @@ def get_brands_list():
     else:
         logger.error(f"Brands list API call failed with status code: {response.status_code}")
         return None
+    
+def get_italist_brands():
+    """
+    Call the brands onboarding API specifically for Italist platform and return its JSON response.
+    """
+    access_token = get_flip_access_token()
+    if not access_token:
+        logger.error("Could not retrieve access token for Italist brands list.")
+        return None
+
+    url = f"{BASE_URL}/shop/admin/brands/onboarding/list/v2"
+    headers = get_headers(access_token)
+    payload = {
+        "page": 1,
+        "limit": 50,
+        "displayStatus": "live",
+        "sort": "createdAt",
+        "order": "desc",
+        "platform": ["italist"]
+    }
+    
+    response = requests.post(url, headers=headers, json=payload)
+    if response.status_code == 201:
+        try:
+            return response.json()
+        except json.JSONDecodeError:
+            logger.error("Italist brands list response is not valid JSON.")
+            return None
+    else:
+        logger.error(f"Italist brands list API call failed with status code: {response.status_code}")
+        return None
+
 
 def call_product_mapping_list(brand_id):
     """
@@ -129,7 +160,7 @@ def accept_mapping(item_mapping_ids):
         logger.error("Could not retrieve access token for accepting mapping.")
         return None
 
-    # Convert single ID to list if needed
+    # convert single ID to list if needed
     if isinstance(item_mapping_ids, str):
         item_mapping_ids = [item_mapping_ids]
     
@@ -140,7 +171,7 @@ def accept_mapping(item_mapping_ids):
     logger.info(f"Accepting mapping for item(s): {item_mapping_ids}")
     response = requests.post(url, headers=headers, json=payload)
     
-    if response.status_code == 200:
+    if response.status_code == 201:
         try:
             result = response.json()
             logger.info(f"Accept mapping response: {json.dumps(result, indent=2)}")
