@@ -1,27 +1,24 @@
+import time
 import logging
 from utils.flip_auth import get_flip_access_token
 from api.brands_api import get_shopify_connected_brands
 from api.mapping_api import get_product_mappings, get_product_variants, accept_item_mappings
-import os
-from dotenv import load_dotenv
-
-load_dotenv()
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-BASE_URL = os.getenv('BASE_URL')
-
-def process_full_mapping_accept():
+def process_mapping_accept():
     """
-      - Retrieves brands via get_shopify_connected_brands
-      - For each brand, requests its product mappings and collects the product ids
-      - For each product mapping ID, retrieves its variants
-      - Collects all itemMapping ids from variants (only for variants with inventory > #)
-      - Calls the accept mapping endpoint in batches with collected itemMapping ids
+    This function chains all API calls:
+      - Retrieves an access token
+      - Retrieves brand ID(s)
+      - Requests the product mappings pages to get product ids
+      - For each product id, retrieves the variants itemMapping ids for variants with sufficient inventory
+      - Calls the accept endpoint with all the collected itemMappin ids in batches
+      - Stops accepting once TARGET successes have been reached, logging total counts
     """
-    access_token = get_flip_access_token()
-    if not access_token:
+    token = get_flip_access_token()
+    if not token:
         logger.error("Failed to retrieve flip access token.")
         return
 
@@ -32,66 +29,83 @@ def process_full_mapping_accept():
 
     all_item_mapping_ids = []
 
-    # Loop through each brand returned by get_shopify_connected_brands()
     for brand in brands_response["data"]:
         brand_id = brand.get("id")
         brand_name = brand.get('name')
         if not brand_id:
-            logger.warning("Brand entry missing 'id'. Skipping this brand.")
+            logger.warning("Brand missing id, skipping")
             continue
 
-        logger.info(f"Processing brand: {brand_name} / {brand_id}")
+        logger.info(f"Processing brand {brand_name} ({brand_id})")
         
-        # Call product mappings endpoint for the brand
-        product_mappings_response = get_product_mappings(brand_id, access_token)
-        if not product_mappings_response or "data" not in product_mappings_response:
-            logger.warning("No product mappings data found for brand id: %s", brand_id)
+        # get all product mappings for the brand
+        product_mappings = get_product_mappings(brand_id, brand_name, token)
+        if not product_mappings:
+            logger.warning(f"No product mappings data found for {brand_name} ({brand_id})")
             continue
 
-        # Process each product mapping (each product)
-        for product in product_mappings_response["data"]:
+        # get each product id
+        for product in product_mappings:
             product_id = product.get("id")
             if not product_id:
-                logger.warning("Product mapping entry missing 'id'. Skipping product.")
+                logger.warning("Product mapping entry missing id. Skipping product")
                 continue
 
             logger.info(f"Processing product mapping id: {product_id}")
             
-            # Retrieve variants for the product mapping
-            variants_response = get_product_variants(product_id, access_token)
-            if not variants_response or "data" not in variants_response:
+            # retrieve all variants for each product id
+            variants = get_product_variants(product_id, token)
+            if not variants:
                 logger.warning(f"No variants data found for product id: {product_id}")
                 continue
 
-            # Extract the "itemMapping" ids from each variant only if inventory is sufficient
-            for variant in variants_response["data"]:
+            # get the "itemMapping" ids from each variant only if inventory > 6
+            for variant in variants:
                 inventory = variant.get("inventoryAmount", 0)
                 if inventory > 6:
                     item_mapping = variant.get("itemMapping")
                     if item_mapping and "id" in item_mapping:
                         item_mapping_id = item_mapping["id"]
                         all_item_mapping_ids.append(item_mapping_id)
-                        logger.info(f"Collected itemMapping id: {item_mapping_id} from a variant with inventory: {inventory}")
+                        logger.info(f"Collected itemMapping id: {item_mapping_id} from a variant with inventory {inventory}")
                     else:
-                        logger.warning(f"Variant in product id {product_id} is missing itemMapping data.")
+                        logger.warning(f"Variant in product id {product_id} is missing itemMapping data")
                 else:
                     logger.info(f"Skipping variant in product id {product_id} because inventory is {inventory}")
 
-    # Process and accept the collected item mapping ids in batches
-    batch_size = 20
+    # process and accept the collected item mapping ids in batches and stop at TARGET
+    batch_size = 30
     total_items = len(all_item_mapping_ids)
+    accepted_count = 0
+    TARGET = 4000
+
     if total_items:
-        logger.info(f"Total collected itemMapping ids: {total_items}")
+        logger.info(f"Total collected itemMapping ids: {total_items} for {brand_name} ({brand_id})")
         for i in range(0, total_items, batch_size):
+            if accepted_count >= TARGET:
+                logger.info(f"Reached target of {TARGET} accepted items; stopping further accepts")
+                break
+
             batch_ids = all_item_mapping_ids[i:i+batch_size]
-            logger.info(f"Accepting batch of len({batch_ids}) itemMapping ids: {batch_ids}")
-            accept_response = accept_item_mappings(batch_ids, access_token)
+            logger.info(f"Accepting batch of {len(batch_ids)} itemMapping ids: {batch_ids}")
+            accept_response = accept_item_mappings(batch_ids, token)
             if accept_response:
-                logger.info(f"Successfully accepted batch. Response: {accept_response}")
+                logger.info(f"Successfully accepted batch - response: {accept_response}")
+                # count successes and failures for batch
+                data = accept_response.get("data", [])
+                errors = accept_response.get("errors", [])
+
+                # True==1, False==0
+                successes = sum(success.get("success", False) for success in data)
+                failures  = sum(not failure.get("success", True)  for failure in errors)
+
+                accepted_count += successes
+                logger.info(f"Batch result for {brand_name}: {successes} succeeded, {failures} failed; total accepted: {accepted_count}")
             else:
                 logger.error(f"Failed to accept batch of itemMapping ids: {batch_ids}")
+            time.sleep(1) # ico rate limits
     else:
-        logger.warning("No itemMapping ids collected for acceptance.")
+        logger.warning("No itemMapping ids collected for acceptance")
 
 if __name__ == "__main__":
-    process_full_mapping_accept()
+    process_mapping_accept()
