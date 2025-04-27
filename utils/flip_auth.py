@@ -7,19 +7,18 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Logging setup
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 BASE_URL = os.getenv('BASE_URL')
-FLIP_URL = os.getenv('FLIP_URL')
 REFRESH_TOKEN = os.getenv('REFRESH_TOKEN')
 APP_PLATFORM = os.getenv('APP_PLATFORM')
 WEB_VERSION = os.getenv('WEB_VERSION')
 DEVICE_FP = os.getenv('DEVICE_FP')
-GET_ACCESS_TOKEN_THROUGH_REFRESH_TOKEN_PATH = os.getenv('GET_ACCESS_TOKEN_THROUGH_REFRESH_TOKEN_PATH')
+REFRESH_TOKEN_PATH = os.getenv('REFRESH_TOKEN_PATH')
 ACCESS_TOKEN_FILE_PATH = os.getenv('ACCESS_TOKEN_FILE_PATH')
 TOKEN_FILE = os.getenv("ACCESS_TOKEN_FILE_PATH", "token.json")
+X_FLIPINATOR_TOOLS = os.getenv('X_FLIPINATOR_TOOLS')
 
 def store_token_data(data):
     with open(TOKEN_FILE, 'w') as file:
@@ -37,16 +36,17 @@ def is_token_valid(token_data):
     return token_data and current_time < token_data['data']['auth']['expiresAt']
 
 def refresh_access_token():
-    url = BASE_URL + GET_ACCESS_TOKEN_THROUGH_REFRESH_TOKEN_PATH
+    url = f'{BASE_URL}{REFRESH_TOKEN_PATH}'
     headers = {
         "App-Platform": APP_PLATFORM,
         "web-version": WEB_VERSION,
         "device-fp": DEVICE_FP,
+        "x-flipinator-tools": X_FLIPINATOR_TOOLS
     }
-    parameters = {
+    params = {
         "refreshToken": REFRESH_TOKEN
     }
-    response = requests.post(url=url, headers=headers, json=parameters)
+    response = requests.post(url=url, headers=headers, json=params)
     if response.status_code == 200:
         token_data = response.json()
         store_token_data(token_data)
@@ -61,6 +61,15 @@ def get_flip_access_token():
         return token_data['data']['auth']['accessToken']
     logger.info("Access token is missing or expired. Refreshing token...")
     return refresh_access_token()
+
+def get_headers(token):
+    token = get_flip_access_token()
+    headers = {
+        "Accept": "application/json, text/plain, */*",
+        "Authorization": f"Bearer {token}",
+        "x-flipinator-tools": X_FLIPINATOR_TOOLS
+    }
+    return headers
 
 if __name__ == "__main__":
     token = get_flip_access_token()
