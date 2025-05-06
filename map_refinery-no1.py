@@ -77,7 +77,7 @@ def process_mapping_accept():
     batch_size = 30
     total_items = len(all_item_mapping_ids)
     accepted_count = 0
-    TARGET = 4000
+    TARGET = 5000
 
     if total_items:
         logger.info(f"Total collected itemMapping ids: {total_items} for {brand_name} ({brand_id})")
