@@ -148,3 +148,29 @@ def get_refinery_no_1():
     else:
         logger.error(f"API call failed with status code: {response.status_code}")
         return None
+    
+def get_rustic_marlin():
+    token = get_flip_access_token()
+    if not token:
+        logger.error("Could not retrieve access token for Italist brands list.")
+        return None
+
+    url = f"{BASE_URL}{BRANDS_LIST_PATH}"
+    headers = get_headers(token)
+    payload = {
+        "page":1,
+        "limit":50,
+        "name":"Rustic Marlin", # rustic marlin only
+        "sort":"createdAt",
+        "order":"desc"
+        }
+    response = requests.post(url, headers=headers, json=payload)
+    if response.status_code == 201:
+        try:
+            return response.json()
+        except json.JSONDecodeError:
+            logger.error("response is not valid JSON.")
+            return None
+    else:
+        logger.error(f"API call failed with status code: {response.status_code}")
+        return None
