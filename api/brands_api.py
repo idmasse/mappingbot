@@ -1,8 +1,8 @@
 import json
 import logging
 import requests
+from api.auth_api import get_flip_access_token, get_headers
 from dotenv import load_dotenv
-from utils.flip_auth import get_flip_access_token, get_headers
 import os
 
 load_dotenv()
@@ -161,6 +161,84 @@ def get_rustic_marlin():
         "page":1,
         "limit":50,
         "name":"Rustic Marlin", # rustic marlin only
+        "sort":"createdAt",
+        "order":"desc"
+        }
+    response = requests.post(url, headers=headers, json=payload)
+    if response.status_code == 201:
+        try:
+            return response.json()
+        except json.JSONDecodeError:
+            logger.error("response is not valid JSON.")
+            return None
+    else:
+        logger.error(f"API call failed with status code: {response.status_code}")
+        return None
+    
+def get_uniikpillows():
+    token = get_flip_access_token()
+    if not token:
+        logger.error("Could not retrieve access token for Italist brands list.")
+        return None
+
+    url = f"{BASE_URL}{BRANDS_LIST_PATH}"
+    headers = get_headers(token)
+    payload = {
+        "page":1,
+        "limit":50,
+        "name":"UniikPillows",
+        "sort":"createdAt",
+        "order":"desc"
+        }
+    response = requests.post(url, headers=headers, json=payload)
+    if response.status_code == 201:
+        try:
+            return response.json()
+        except json.JSONDecodeError:
+            logger.error("response is not valid JSON.")
+            return None
+    else:
+        logger.error(f"API call failed with status code: {response.status_code}")
+        return None
+
+def get_doghugscat():
+    token = get_flip_access_token()
+    if not token:
+        logger.error("Could not retrieve access token for Italist brands list.")
+        return None
+
+    url = f"{BASE_URL}{BRANDS_LIST_PATH}"
+    headers = get_headers(token)
+    payload = {
+        "page":1,
+        "limit":50,
+        "name":"Dog Hugs Cat",
+        "sort":"createdAt",
+        "order":"desc"
+        }
+    response = requests.post(url, headers=headers, json=payload)
+    if response.status_code == 201:
+        try:
+            return response.json()
+        except json.JSONDecodeError:
+            logger.error("response is not valid JSON.")
+            return None
+    else:
+        logger.error(f"API call failed with status code: {response.status_code}")
+        return None
+
+def get_lapopart():
+    token = get_flip_access_token()
+    if not token:
+        logger.error("Could not retrieve access token for Italist brands list.")
+        return None
+
+    url = f"{BASE_URL}{BRANDS_LIST_PATH}"
+    headers = get_headers(token)
+    payload = {
+        "page":1,
+        "limit":50,
+        "name":"Los Angeles Pop Art",
         "sort":"createdAt",
         "order":"desc"
         }

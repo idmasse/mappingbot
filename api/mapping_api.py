@@ -1,8 +1,8 @@
 import json
 import logging
 import requests
+from api.auth_api import get_headers, get_flip_access_token
 from dotenv import load_dotenv
-from utils.flip_auth import get_headers, get_flip_access_token
 import os
 
 load_dotenv()

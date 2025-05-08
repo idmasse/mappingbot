@@ -1,6 +1,6 @@
 import time
 import logging
-from utils.flip_auth import get_flip_access_token
+from api.auth_api import get_flip_access_token
 from api.brands_api import get_doghugscat
 from api.mapping_api import get_product_mappings, get_product_variants, accept_item_mappings
 
