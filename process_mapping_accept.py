@@ -1,27 +1,12 @@
 import time
 import logging
-from api.auth_api import get_flip_access_token
-from api.brands_api import get_lapopart
 from api.mapping_api import get_product_mappings, get_product_variants, accept_item_mappings
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-def process_mapping_accept():
-    """
-      - Retrieves an access token
-      - Retrieves brand ID(s)
-      - Requests the product mappings pages to get product ids
-      - For each product id, retrieves the variants itemMapping ids for variants with sufficient inventory
-      - Calls the accept endpoint with all the collected itemMappin ids in batches
-      - Stops accepting once TARGET successes have been reached, logging total counts
-    """
-    token = get_flip_access_token()
-    if not token:
-        logger.error("Failed to retrieve flip access token.")
-        return
-
-    brands_response = get_lapopart()
+def process_mapping_accept(get_brands_fn):
+    brands_response = get_brands_fn()
     if not brands_response or "data" not in brands_response:
         logger.error("No brands data found.")
         return
@@ -38,7 +23,7 @@ def process_mapping_accept():
         logger.info(f"Processing brand {brand_name} ({brand_id})")
         
         # get all product mappings for the brand
-        product_mappings = get_product_mappings(brand_id, brand_name, token)
+        product_mappings = get_product_mappings(brand_id, brand_name)
         if not product_mappings:
             logger.warning(f"No product mappings data found for {brand_name} ({brand_id})")
             continue
@@ -53,22 +38,24 @@ def process_mapping_accept():
             logger.info(f"Processing product mapping id: {product_id}")
             
             # retrieve all variants for each product id
-            variants = get_product_variants(product_id, token)
+            variants = get_product_variants(product_id)
             if not variants:
                 logger.warning(f"No variants data found for product id: {product_id}")
                 continue
 
-            # get the "itemMapping" ids from each variant only if inventory > 6
+            # get the "itemMapping" ids from each variant only if inventory > 6 and all info provided == True
             for variant in variants:
                 inventory = variant.get("inventoryAmount", 0)
                 if inventory > 6:
                     item_mapping = variant.get("itemMapping")
-                    if item_mapping and "id" in item_mapping:
+                    all_info_provided = item_mapping.get('allInformationForImportProvided')
+                    if item_mapping and "id" in item_mapping and all_info_provided:
                         item_mapping_id = item_mapping["id"]
                         all_item_mapping_ids.append(item_mapping_id)
                         logger.info(f"Collected itemMapping id: {item_mapping_id} from a variant with inventory {inventory}")
                     else:
-                        logger.warning(f"Variant in product id {product_id} is missing itemMapping data")
+                        if not all_info_provided:
+                            logger.warning(f"Variant in product id {product_id} isnt ready for import")
                 else:
                     logger.info(f"Skipping variant in product id {product_id} because inventory is {inventory}")
 
@@ -76,7 +63,7 @@ def process_mapping_accept():
     batch_size = 30
     total_items = len(all_item_mapping_ids)
     accepted_count = 0
-    TARGET = 5000
+    TARGET = 10000
 
     if total_items:
         logger.info(f"Total collected itemMapping ids: {total_items} for {brand_name} ({brand_id})")
@@ -87,7 +74,7 @@ def process_mapping_accept():
 
             batch_ids = all_item_mapping_ids[i:i+batch_size]
             logger.info(f"Accepting batch of {len(batch_ids)} itemMapping ids: {batch_ids}")
-            accept_response = accept_item_mappings(batch_ids, token)
+            accept_response = accept_item_mappings(batch_ids)
             if accept_response:
                 logger.info(f"Successfully accepted batch - response: {accept_response}")
                 # count successes and failures for batch

@@ -16,13 +16,13 @@ LIMIT = 50
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s', datefmt="%Y-%m-%d %H:%M:%S")
 logger = logging.getLogger(__name__)
 
-def get_product_mappings(item_brand_id, brand_name, token):
+def get_product_mappings(item_brand_id, brand_name, max_pages=105):
     all_mappings = []
     page = 1
 
-    while True:
+    while page <= max_pages:
         url = f"{BASE_URL}{PRODUCT_MAPPINGS_PATH}"
-        headers = get_headers(token)
+        headers = get_headers()
         payload = {"page": page, "limit": LIMIT, "itemBrandId": item_brand_id}
         response = requests.post(url, headers=headers, json=payload)
         if response.status_code == 201:
@@ -40,9 +40,9 @@ def get_product_mappings(item_brand_id, brand_name, token):
             break
 
         all_mappings.extend(data)
-        logger.info(f"Fetched {len(data)} product mappings from {page} for {brand_name} ({item_brand_id})")
+        logger.info(f"Fetched {len(data)} product mappings from page {page} for {brand_name} ({item_brand_id})")
 
-        # If the number of items is less than the limit its probably last page.
+        #if the number of items is less than the limit its probably last page
         if len(data) < LIMIT:
             break
 
@@ -50,13 +50,13 @@ def get_product_mappings(item_brand_id, brand_name, token):
 
     return all_mappings
 
-def get_product_variants(product_id, token):
+def get_product_variants(product_id):
     all_variants = []
     page = 1
 
     while True:
         url = f"{BASE_URL}{PRODUCT_MAPPING_VARIANTS_PATH}".format(product_id=product_id)
-        headers = get_headers(token)
+        headers = get_headers()
         payload = {"page": page, "limit": LIMIT}
         response = requests.post(url, headers=headers, json=payload)
 
@@ -85,9 +85,9 @@ def get_product_variants(product_id, token):
     return all_variants
 
 # /shop/brand/items-mapping/accept/v1
-def accept_item_mappings(item_ids, token, retry=True):
+def accept_item_mappings(item_ids, retry=True):
     url = f"{BASE_URL}{ACCEPT_MAPPING_PATH}"
-    headers = get_headers(token)
+    headers = get_headers()
     payload = {"itemIds": item_ids}
     response = requests.post(url, headers=headers, json=payload)
     if response.status_code in (200, 201):
@@ -95,6 +95,7 @@ def accept_item_mappings(item_ids, token, retry=True):
 
     elif response.status_code == 401 and retry:
         logger.error("received 401 response - attempting to refresh access token and retry")
+        token = get_flip_access_token()
         new_token = get_flip_access_token()
         if new_token and new_token != token:
             #retry the request once with the new token

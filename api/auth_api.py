@@ -62,7 +62,7 @@ def get_flip_access_token():
     logger.info("Access token is missing or expired. Refreshing token...")
     return refresh_access_token()
 
-def get_headers(token):
+def get_headers():
     token = get_flip_access_token()
     headers = {
         "Accept": "application/json, text/plain, */*",
@@ -70,10 +70,3 @@ def get_headers(token):
         "x-flipinator-tools": X_FLIPINATOR_TOOLS
     }
     return headers
-
-if __name__ == "__main__":
-    token = get_flip_access_token()
-    if token:
-        print("Access token retrieved:", token)
-    else:
-        print("Failed to retrieve access token")

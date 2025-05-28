@@ -1,23 +1,23 @@
-from map_culture_kings import process_mapping_accept as map_culture_kings
-from map_doghugscat import process_mapping_accept as map_doghugscat
-from map_italist import process_mapping_accept as map_italist
-from map_lapopart import process_mapping_accept as map_lapopart
-from map_princesspolly import process_mapping_accept as map_princesspolly
-from map_refinery_no1 import process_mapping_accept as map_refinery_no1
-from map_rustic_marlin import process_mapping_accept as map_rustic_marlin
-from map_shopify_brands import process_mapping_accept as map_shopify_brands
-from map_uniikpillows import process_mapping_accept as map_uniikpillows
+from api.brands_api import *
+from process_mapping_accept import process_mapping_accept
 
 def main():
-    # map_culture_kings()
-    map_doghugscat()
-    # map_italist()
-    # map_lapopart()
-    # map_princesspolly()
-    # map_refinery_no1()
-    map_rustic_marlin()
-    # map_shopify_brands()
-    map_uniikpillows()
+
+    brand_functions = [
+        # get_belt_rhinestone,
+        # get_liberal_repellent,
+        # get_galaxy_by_harvic,
+        # get_harpro,
+        # get_mothersgold,
+        # get_tictoc,
+        # get_thirdlove,
+        get_lapopart,
+        # get_rustic_marlin,
+        # get_petlife
+    ]
+
+    for fn in brand_functions:
+        process_mapping_accept(fn)
 
 if __name__ == '__main__':
     main()

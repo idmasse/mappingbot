@@ -1,7 +1,7 @@
 import json
 import logging
 import requests
-from api.auth_api import get_flip_access_token, get_headers
+from api.auth_api import get_headers
 from dotenv import load_dotenv
 import os
 
@@ -13,14 +13,11 @@ BRANDS_LIST_PATH = '/shop/admin/brands/onboarding/list/v2'
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-def get_shopify_connected_brands():
-    token = get_flip_access_token()
-    if not token:
-        logger.error("Could not retrieve access token for brands list.")
-        return None
+### GET BY CONNECTOR ###
 
+def get_shopify_connected_brands():
     url = f"{BASE_URL}{BRANDS_LIST_PATH}"
-    headers = get_headers(token)
+    headers = get_headers()
     payload = {
         "page": 1,
         "limit": 50,
@@ -41,14 +38,11 @@ def get_shopify_connected_brands():
         logger.error(f"shopify brands list API call failed with status code: {response.status_code}")
         return None
     
+### GET BY CONNECTED PLATFORM ###
+    
 def get_italist_brands():
-    token = get_flip_access_token()
-    if not token:
-        logger.error("Could not retrieve access token for Italist brands list.")
-        return None
-
     url = f"{BASE_URL}{BRANDS_LIST_PATH}"
-    headers = get_headers(token)
+    headers = get_headers()
     payload = {
         "page": 1,
         "limit": 50,
@@ -70,13 +64,8 @@ def get_italist_brands():
         return None
     
 def get_culture_kings_brands():
-    token = get_flip_access_token()
-    if not token:
-        logger.error("Could not retrieve access token for Italist brands list.")
-        return None
-
     url = f"{BASE_URL}{BRANDS_LIST_PATH}"
-    headers = get_headers(token)
+    headers = get_headers()
     payload = {
         "page": 1,
         "limit": 50,
@@ -97,14 +86,11 @@ def get_culture_kings_brands():
         logger.error(f"brands list API call failed with status code: {response.status_code}")
         return None
     
+### GET BY BRAND NAME ###
+    
 def get_princess_polly():
-    token = get_flip_access_token()
-    if not token:
-        logger.error("Could not retrieve access token for Italist brands list.")
-        return None
-
     url = f"{BASE_URL}{BRANDS_LIST_PATH}"
-    headers = get_headers(token)
+    headers = get_headers()
     payload = {
         "page":1,
         "limit":50,
@@ -124,13 +110,8 @@ def get_princess_polly():
         return None
 
 def get_refinery_no_1():
-    token = get_flip_access_token()
-    if not token:
-        logger.error("Could not retrieve access token for Italist brands list.")
-        return None
-
     url = f"{BASE_URL}{BRANDS_LIST_PATH}"
-    headers = get_headers(token)
+    headers = get_headers()
     payload = {
         "page":1,
         "limit":50,
@@ -150,13 +131,8 @@ def get_refinery_no_1():
         return None
     
 def get_rustic_marlin():
-    token = get_flip_access_token()
-    if not token:
-        logger.error("Could not retrieve access token for Italist brands list.")
-        return None
-
     url = f"{BASE_URL}{BRANDS_LIST_PATH}"
-    headers = get_headers(token)
+    headers = get_headers()
     payload = {
         "page":1,
         "limit":50,
@@ -176,13 +152,8 @@ def get_rustic_marlin():
         return None
     
 def get_uniikpillows():
-    token = get_flip_access_token()
-    if not token:
-        logger.error("Could not retrieve access token for Italist brands list.")
-        return None
-
     url = f"{BASE_URL}{BRANDS_LIST_PATH}"
-    headers = get_headers(token)
+    headers = get_headers()
     payload = {
         "page":1,
         "limit":50,
@@ -202,13 +173,8 @@ def get_uniikpillows():
         return None
 
 def get_doghugscat():
-    token = get_flip_access_token()
-    if not token:
-        logger.error("Could not retrieve access token for Italist brands list.")
-        return None
-
     url = f"{BASE_URL}{BRANDS_LIST_PATH}"
-    headers = get_headers(token)
+    headers = get_headers()
     payload = {
         "page":1,
         "limit":50,
@@ -228,17 +194,180 @@ def get_doghugscat():
         return None
 
 def get_lapopart():
-    token = get_flip_access_token()
-    if not token:
-        logger.error("Could not retrieve access token for Italist brands list.")
-        return None
-
     url = f"{BASE_URL}{BRANDS_LIST_PATH}"
-    headers = get_headers(token)
+    headers = get_headers()
     payload = {
         "page":1,
         "limit":50,
         "name":"Los Angeles Pop Art",
+        "sort":"createdAt",
+        "order":"desc"
+        }
+    response = requests.post(url, headers=headers, json=payload)
+    if response.status_code == 201:
+        try:
+            return response.json()
+        except json.JSONDecodeError:
+            logger.error("response is not valid JSON.")
+            return None
+    else:
+        logger.error(f"API call failed with status code: {response.status_code}")
+        return None
+    
+def get_liberal_repellent():
+    url = f"{BASE_URL}{BRANDS_LIST_PATH}"
+    headers = get_headers()
+    payload = {
+        "page":1,
+        "limit":50,
+        "name":"Liberal Repellent",
+        "sort":"createdAt",
+        "order":"desc"
+        }
+    response = requests.post(url, headers=headers, json=payload)
+    if response.status_code == 201:
+        try:
+            return response.json()
+        except json.JSONDecodeError:
+            logger.error("response is not valid JSON.")
+            return None
+    else:
+        logger.error(f"API call failed with status code: {response.status_code}")
+        return None
+    
+def get_belt_rhinestone():
+    url = f"{BASE_URL}{BRANDS_LIST_PATH}"
+    headers = get_headers()
+    payload = {
+        "page":1,
+        "limit":50,
+        "name":"Belt Rhinestone",
+        "sort":"createdAt",
+        "order":"desc"
+        }
+    response = requests.post(url, headers=headers, json=payload)
+    if response.status_code == 201:
+        try:
+            return response.json()
+        except json.JSONDecodeError:
+            logger.error("response is not valid JSON.")
+            return None
+    else:
+        logger.error(f"API call failed with status code: {response.status_code}")
+        return None
+    
+def get_thirdlove():
+    url = f"{BASE_URL}{BRANDS_LIST_PATH}"
+    headers = get_headers()
+    payload = {
+        "page":1,
+        "limit":50,
+        "name":"Thirdlove",
+        "sort":"createdAt",
+        "order":"desc"
+        }
+    response = requests.post(url, headers=headers, json=payload)
+    if response.status_code == 201:
+        try:
+            return response.json()
+        except json.JSONDecodeError:
+            logger.error("response is not valid JSON.")
+            return None
+    else:
+        logger.error(f"API call failed with status code: {response.status_code}")
+        return None
+    
+def get_harpro():
+    url = f"{BASE_URL}{BRANDS_LIST_PATH}"
+    headers = get_headers()
+    payload = {
+        "page":1,
+        "limit":50,
+        "name":"Harpro",
+        "sort":"createdAt",
+        "order":"desc"
+        }
+    response = requests.post(url, headers=headers, json=payload)
+    if response.status_code == 201:
+        try:
+            return response.json()
+        except json.JSONDecodeError:
+            logger.error("response is not valid JSON.")
+            return None
+    else:
+        logger.error(f"API call failed with status code: {response.status_code}")
+        return None
+    
+def get_galaxy_by_harvic():
+    url = f"{BASE_URL}{BRANDS_LIST_PATH}"
+    headers = get_headers()
+    payload = {
+        "page":1,
+        "limit":50,
+        "name":"Galaxy By Harvic",
+        "sort":"createdAt",
+        "order":"desc"
+        }
+    response = requests.post(url, headers=headers, json=payload)
+    if response.status_code == 201:
+        try:
+            return response.json()
+        except json.JSONDecodeError:
+            logger.error("response is not valid JSON.")
+            return None
+    else:
+        logger.error(f"API call failed with status code: {response.status_code}")
+        return None
+    
+def get_mothersgold():
+    url = f"{BASE_URL}{BRANDS_LIST_PATH}"
+    headers = get_headers()
+    payload = {
+        "page":1,
+        "limit":50,
+        "name":"Mothersgold",
+        "sort":"createdAt",
+        "order":"desc"
+        }
+    response = requests.post(url, headers=headers, json=payload)
+    if response.status_code == 201:
+        try:
+            return response.json()
+        except json.JSONDecodeError:
+            logger.error("response is not valid JSON.")
+            return None
+    else:
+        logger.error(f"API call failed with status code: {response.status_code}")
+        return None
+    
+def get_tictoc():
+    url = f"{BASE_URL}{BRANDS_LIST_PATH}"
+    headers = get_headers()
+    payload = {
+        "page":1,
+        "limit":50,
+        "name":"Tic Toc",
+        "sort":"createdAt",
+        "order":"desc"
+        }
+    response = requests.post(url, headers=headers, json=payload)
+    if response.status_code == 201:
+        try:
+            return response.json()
+        except json.JSONDecodeError:
+            logger.error("response is not valid JSON.")
+            return None
+    else:
+        logger.error(f"API call failed with status code: {response.status_code}")
+        return None
+    
+def get_petlife():
+    url = f"{BASE_URL}{BRANDS_LIST_PATH}"
+    headers = get_headers()
+    payload = {
+        "page":1,
+        "limit":50,
+        "name":"Pet Life",
         "sort":"createdAt",
         "order":"desc"
         }
