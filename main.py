@@ -11,9 +11,17 @@ def main():
         # get_mothersgold,
         # get_tictoc,
         # get_thirdlove,
-        get_lapopart,
+        # get_lapopart,
         # get_rustic_marlin,
-        # get_petlife
+        # get_petlife,
+        # get_lauren_g_adams,
+        # get_moonlight_makers,
+        # get_bayeas,
+        # get_onetify,
+        # get_mnml,
+        # get_pipa_fine_art,
+        get_moomaya, #4.4k
+        get_leg_avenue, #1.6k
     ]
 
     for fn in brand_functions:
