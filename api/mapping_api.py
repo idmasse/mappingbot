@@ -16,7 +16,7 @@ LIMIT = 50
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s', datefmt="%Y-%m-%d %H:%M:%S")
 logger = logging.getLogger(__name__)
 
-def get_product_mappings(item_brand_id, brand_name, max_pages=105):
+def get_product_mappings(item_brand_id, brand_name, max_pages=20):
     all_mappings = []
     page = 1
 
