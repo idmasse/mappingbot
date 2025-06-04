@@ -381,3 +381,192 @@ def get_petlife():
     else:
         logger.error(f"API call failed with status code: {response.status_code}")
         return None
+    
+def get_lauren_g_adams():
+    url = f"{BASE_URL}{BRANDS_LIST_PATH}"
+    headers = get_headers()
+    payload = {
+        "page":1,
+        "limit":50,
+        "name":"Lauren G Adams",
+        "sort":"createdAt",
+        "order":"desc"
+        }
+    response = requests.post(url, headers=headers, json=payload)
+    if response.status_code == 201:
+        try:
+            return response.json()
+        except json.JSONDecodeError:
+            logger.error("response is not valid JSON.")
+            return None
+    else:
+        logger.error(f"API call failed with status code: {response.status_code}")
+        return None
+    
+def get_moonlight_makers():
+    url = f"{BASE_URL}{BRANDS_LIST_PATH}"
+    headers = get_headers()
+    payload = {
+        "page":1,
+        "limit":50,
+        "name":"Moonlight Makers",
+        "sort":"createdAt",
+        "order":"desc"
+        }
+    response = requests.post(url, headers=headers, json=payload)
+    if response.status_code == 201:
+        try:
+            return response.json()
+        except json.JSONDecodeError:
+            logger.error("response is not valid JSON.")
+            return None
+    else:
+        logger.error(f"API call failed with status code: {response.status_code}")
+        return None
+    
+def get_bayeas():
+    url = f"{BASE_URL}{BRANDS_LIST_PATH}"
+    headers = get_headers()
+    payload = {
+        "page":1,
+        "limit":50,
+        "name":"Bayeas",
+        "sort":"createdAt",
+        "order":"desc"
+        }
+    response = requests.post(url, headers=headers, json=payload)
+    if response.status_code == 201:
+        try:
+            return response.json()
+        except json.JSONDecodeError:
+            logger.error("response is not valid JSON.")
+            return None
+    else:
+        logger.error(f"API call failed with status code: {response.status_code}")
+        return None
+    
+def get_pipa_fine_art():
+    url = f"{BASE_URL}{BRANDS_LIST_PATH}"
+    headers = get_headers()
+    payload = {
+        "page":1,
+        "limit":50,
+        "name":"PIPA Fine Art",
+        "sort":"createdAt",
+        "order":"desc"
+        }
+    response = requests.post(url, headers=headers, json=payload)
+    if response.status_code == 201:
+        try:
+            return response.json()
+        except json.JSONDecodeError:
+            logger.error("response is not valid JSON.")
+            return None
+    else:
+        logger.error(f"API call failed with status code: {response.status_code}")
+        return None
+
+def get_onetify():
+    url = f"{BASE_URL}{BRANDS_LIST_PATH}"
+    headers = get_headers()
+    payload = {
+        "page":1,
+        "limit":50,
+        "name":"Onetify",
+        "sort":"createdAt",
+        "order":"desc"
+        }
+    response = requests.post(url, headers=headers, json=payload)
+    if response.status_code == 201:
+        try:
+            return response.json()
+        except json.JSONDecodeError:
+            logger.error("response is not valid JSON.")
+            return None
+    else:
+        logger.error(f"API call failed with status code: {response.status_code}")
+        return None
+    
+def get_mnml():
+    url = f"{BASE_URL}{BRANDS_LIST_PATH}"
+    headers = get_headers()
+    payload = {
+        "page":1,
+        "limit":50,
+        "name":"MNML",
+        "sort":"createdAt",
+        "order":"desc"
+        }
+    response = requests.post(url, headers=headers, json=payload)
+    if response.status_code == 201:
+        try:
+            return response.json()
+        except json.JSONDecodeError:
+            logger.error("response is not valid JSON.")
+            return None
+    else:
+        logger.error(f"API call failed with status code: {response.status_code}")
+        return None
+    
+def get_pipa_fine_art():
+    url = f"{BASE_URL}{BRANDS_LIST_PATH}"
+    headers = get_headers()
+    payload = {
+        "page":1,
+        "limit":50,
+        "name":"PIPA Fine Art",
+        "sort":"createdAt",
+        "order":"desc"
+        }
+    response = requests.post(url, headers=headers, json=payload)
+    if response.status_code == 201:
+        try:
+            return response.json()
+        except json.JSONDecodeError:
+            logger.error("response is not valid JSON.")
+            return None
+    else:
+        logger.error(f"API call failed with status code: {response.status_code}")
+        return None 
+
+def get_moomaya():
+    url = f"{BASE_URL}{BRANDS_LIST_PATH}"
+    headers = get_headers()
+    payload = {
+        "page":1,
+        "limit":50,
+        "name":"Moomaya",
+        "sort":"createdAt",
+        "order":"desc"
+        }
+    response = requests.post(url, headers=headers, json=payload)
+    if response.status_code == 201:
+        try:
+            return response.json()
+        except json.JSONDecodeError:
+            logger.error("response is not valid JSON.")
+            return None
+    else:
+        logger.error(f"API call failed with status code: {response.status_code}")
+        return None 
+
+def get_leg_avenue():
+    url = f"{BASE_URL}{BRANDS_LIST_PATH}"
+    headers = get_headers()
+    payload = {
+        "page":1,
+        "limit":50,
+        "name":"Leg Avenue",
+        "sort":"createdAt",
+        "order":"desc"
+        }
+    response = requests.post(url, headers=headers, json=payload)
+    if response.status_code == 201:
+        try:
+            return response.json()
+        except json.JSONDecodeError:
+            logger.error("response is not valid JSON.")
+            return None
+    else:
+        logger.error(f"API call failed with status code: {response.status_code}")
+        return None 
