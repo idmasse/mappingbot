@@ -570,3 +570,88 @@ def get_leg_avenue():
     else:
         logger.error(f"API call failed with status code: {response.status_code}")
         return None 
+    
+def get_directdeals():
+    url = f"{BASE_URL}{BRANDS_LIST_PATH}"
+    headers = get_headers()
+    payload = {
+        "page":1,
+        "limit":50,
+        "name":"Directdeals",
+        "sort":"createdAt",
+        "order":"desc"
+        }
+    response = requests.post(url, headers=headers, json=payload)
+    if response.status_code == 201:
+        try:
+            return response.json()
+        except json.JSONDecodeError:
+            logger.error("response is not valid JSON.")
+            return None
+    else:
+        logger.error(f"API call failed with status code: {response.status_code}")
+        return None
+    
+def get_anna_kaci():
+    url = f"{BASE_URL}{BRANDS_LIST_PATH}"
+    headers = get_headers()
+    payload = {
+        "page":1,
+        "limit":50,
+        "name":"Anna-Kaci",
+        "sort":"createdAt",
+        "order":"desc"
+        }
+    response = requests.post(url, headers=headers, json=payload)
+    if response.status_code == 201:
+        try:
+            return response.json()
+        except json.JSONDecodeError:
+            logger.error("response is not valid JSON.")
+            return None
+    else:
+        logger.error(f"API call failed with status code: {response.status_code}")
+        return None
+    
+def get_fine_color_jewels():
+    url = f"{BASE_URL}{BRANDS_LIST_PATH}"
+    headers = get_headers()
+    payload = {
+        "page":1,
+        "limit":50,
+        "name":"Fine Color Jewels",
+        "sort":"createdAt",
+        "order":"desc"
+        }
+    response = requests.post(url, headers=headers, json=payload)
+    if response.status_code == 201:
+        try:
+            return response.json()
+        except json.JSONDecodeError:
+            logger.error("response is not valid JSON.")
+            return None
+    else:
+        logger.error(f"API call failed with status code: {response.status_code}")
+        return None
+    
+def get_fc_design():
+    url = f"{BASE_URL}{BRANDS_LIST_PATH}"
+    headers = get_headers()
+    payload = {
+        "page":1,
+        "limit":50,
+        "name":"FC Design",
+        "sort":"createdAt",
+        "order":"desc"
+        }
+    response = requests.post(url, headers=headers, json=payload)
+    if response.status_code == 201:
+        try:
+            return response.json()
+        except json.JSONDecodeError:
+            logger.error("response is not valid JSON.")
+            return None
+    else:
+        logger.error(f"API call failed with status code: {response.status_code}")
+        return None
+    
